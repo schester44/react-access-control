@@ -115,7 +115,7 @@ define({
 hasPermission(permissions, options)
 ```
 
-`hasPermission: (permissions: { [permission: string]: boolean }, options: { [resource: string ]: string|integer })`
+`hasPermission: (permissions: { [permission: string]: boolean }, options: { [resource: string ]: string|integer }) => boolean`
 
 Fist argument accepts a string or array of permissions to check. When passing an array, the user must have access to all permissions for hasPermission to be true.
 
