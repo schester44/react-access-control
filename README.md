@@ -1,6 +1,6 @@
 # react-access-control
 
-> Role based access control for conditional rendering of React components. 
+> Role based access control for conditional rendering of React components and routes.
 
 [![NPM](https://img.shields.io/npm/v/react-access-control.svg)](https://www.npmjs.com/package/react-access-control) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -13,18 +13,112 @@ npm install --save react-access-control
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
+import React from "react"
+import { AuthProvider, useAccess, Show } from "react-access-control"
+import LoadingIndicator from "../LoadingIndicator"
 
-import MyComponent from 'react-access-control'
+const Example = () => {
+	const { isLoaded, hasPermission, define } = useAccess()
 
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
+	React.useEffect(() => {
+		define({
+			permissions: {
+				"todos:read": true,
+				"todos:write": false
+			}
+		})
+	}, [])
+
+	const userCanWrite = hasPermission("todos:read")
+
+	if (!isLoaded) return <LoadingIndicator />
+
+	return (
+		<div>
+			{userCanWrite && <RenderSomething />}
+
+			<Show when="todos:read" resource={1} fallback={<div>oops no access</div>}>
+				<RenderSomething />
+			</Show>
+		</div>
+	)
 }
+
+render(
+	<AuthProvider>
+		<Example />
+	</AuthProvider>,
+	document.getElementById("root")
+)
 ```
+
+## API Reference
+
+### AccessProvider
+
+This lib relies on React's Context API, so a Provider is required. Use it like any other Provider..
+
+```js
+<AccessProvider>
+	<App />
+</AccessProvider>
+```
+
+### Show
+
+A compontent that can be used to conditionally render components. If the user doesn't have necessary permissions passed into the `when` prop then the fallback, or nothing, is rendered.
+
+Has 3 available props:
+
+-   when (required) - The permission we want to check against. Also accepts an array of permissions.
+-   resource (optional) - Passing a resource will check the resources object to ensure the user has access to a specific resource. This allows for more granular control over access.
+-   fallback (optional) - ReactNode to render when the user doesn't have permission.
+
+```js
+<Show when="stores:read" resource={1} fallback={<div>I render when the user doesn't have access</div>}>
+	<MyComponent />
+</Show>
+```
+
+### useAccess
+
+A hook for hooking into the AccessContext context.
+
+#### isLoaded
+
+isLoaded will be false if `define` has never been called. Once define is called we assume isLoaded is true. This flag can be used to prevent loading the app until permissions have been fetched and loaded.
+
+#### hasPermission
+
+```js
+hasPermission(permissions, options)
+```
+
+Fist argument accepts a string or array of permissions to check. When passing an array, the user must have access to all permissions for hasPermission to be true.
+
+Second argument is an object. Currently only supports `resource` which is a resource's ID.
+
+#### define
+
+This function defines the user's permissions and resources that they have access to.
+Typically, this would be called as soon as possible (in your top level component).
+
+```js
+define({
+	permissions: { "stores:read": true, "stores:write": false },
+	resources: {
+		stores: {
+			"6": true
+		}
+	}
+})
+```
+
+### withAuth
+
+Restrict access to routes with this HOC
+
+// TODO
 
 ## License
 
