@@ -54,7 +54,7 @@ render(
 
 ## API Reference
 
-### AccessProvider
+### <AccessProvider />
 
 This lib relies on React's Context API, so a Provider is required. Use it like any other Provider..
 
@@ -64,7 +64,7 @@ This lib relies on React's Context API, so a Provider is required. Use it like a
 </AccessProvider>
 ```
 
-### Show
+### <Show />
 
 A compontent that can be used to conditionally render components. If the user doesn't have necessary permissions passed into the `when` prop then the fallback, or nothing, is rendered.
 
