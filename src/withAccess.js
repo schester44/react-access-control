@@ -1,20 +1,54 @@
 import React from "react"
+
 import useAccess from "./useAccess"
+import AuthContext from "./context"
 
-const withAccess = (Component, allowedRoles = []) => {
-	return props => {
-		const { hasPermission } = useAccess()
+const withAccess = setter => {
+	if (typeof setter !== "function" && typeof setter !== "object") {
+		throw new Error("withAccess accepts a function or object")
+	}
 
-		// no roles are being passed in assume permission
-		if (allowedRoles.length === 0) {
-			return <Component {...props} />
-		}
+	return WrappedComponent => {
+		const ConnectedComponent = React.memo(props => {
+			const { onDeny } = React.useContext(AuthContext)
 
-		// props.authResource would be the ID of the resource to AUTH against... You'd typically pass this prop at the Route level or inside the parent of the withAccess wrapped component
-		const allowed = hasPermission(allowedRoles, { resourceId: props.authResource })
+			let values = {}
 
-		// TODO: This can't be hard coded. how do we handle the else statement so that it works with other use cases?
-		return allowed ? <Component {...props} /> : <Redirect to="/error-403" />
+			if (typeof setter === "function") {
+				values = setter(props)
+			} else {
+				values = setter
+			}
+
+			const { hasPermission } = useAccess()
+
+			if (!values.permissions) {
+				throw new Error("No permissions were passed to withAccess")
+			}
+
+			if (values.permissions.length === 0) {
+				return <WrappedComponent {...props} />
+			}
+
+			const allowed = hasPermission(values.permissions, { resource: values.resource })
+
+			if (allowed) {
+				return <WrappedComponent {...props} />
+			}
+
+			const nextAction =
+				typeof values.onDeny === "function" ? values.onDeny : typeof onDeny === "function" ? onDeny : null
+
+			if (!nextAction) {
+				return console.warn(
+					"withAccess does not have have a provided onDeny callback. While this is not an error, you could potentially improve the user experience by implementing one."
+				)
+			}
+
+			return nextAction(props)
+		})
+
+		return ConnectedComponent
 	}
 }
 

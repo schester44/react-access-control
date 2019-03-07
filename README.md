@@ -58,8 +58,10 @@ render(
 
 This lib relies on React's Context API, so a Provider is required. Use it like any other Provider..
 
+The onDeny prop is called anytime access is not permitted. Typically used for redirects and alerts.
+
 ```js
-<AccessProvider>
+<AccessProvider onDeny={() => <Redirect to={ERROR_ROUTE} />}>
 	<App />
 </AccessProvider>
 ```
@@ -121,15 +123,13 @@ Fist argument accepts a string or array of permissions to check. When passing an
 
 Second argument is an object. Currently only supports `resource` which is a resource's ID.
 
-### withAuth
+### withAccess
 
-Restrict access to routes with this HOC
+Restrict access to routes and components with the withAccess hoc. Provides access to the wrapped component's props for checking against a resource ID. Can also, optionally provide an onDeny function to handle a user that has no access.
 
 ```js
-withAuth(MyRestrictedComponent, ["stores:read"])
+withAccess(props => ({ permissions: ["stores:read"], resource: props.storeId, onDeny: () => <Redirect to={SOME_ROUTE} /> })(ExampleComponent)
 ```
-
-// TODO
 
 ## License
 
