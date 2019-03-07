@@ -70,9 +70,14 @@ A compontent that can be used to conditionally render components. If the user do
 
 Has 3 available props:
 
--   when (required) - The permission we want to check against. Also accepts an array of permissions.
--   resource (optional) - Passing a resource will check the resources object to ensure the user has access to a specific resource. This allows for more granular control over access.
--   fallback (optional) - ReactNode to render when the user doesn't have permission.
+`when: string|array` (required)
+The permission(s) we want to check against. Also accepts an array of permissions.
+
+`resource: string|integer` (optional)
+Passing a resource will check the resources object to ensure the user has access to a specific resource. This allows for more granular control over access.
+
+`fallback: ReactNode` (optional)
+What to render when the user doesn't have access
 
 ```js
 <Show when="stores:read" resource={1} fallback={<div>I render when the user doesn't have access</div>}>
@@ -87,16 +92,6 @@ A hook for hooking into the AccessContext context.
 #### isLoaded
 
 isLoaded will be false if `define` has never been called. Once define is called we assume isLoaded is true. This flag can be used to prevent loading the app until permissions have been fetched and loaded.
-
-#### hasPermission
-
-```js
-hasPermission(permissions, options)
-```
-
-Fist argument accepts a string or array of permissions to check. When passing an array, the user must have access to all permissions for hasPermission to be true.
-
-Second argument is an object. Currently only supports `resource` which is a resource's ID.
 
 #### define
 
@@ -114,9 +109,25 @@ define({
 })
 ```
 
-### withAuth
+#### hasPermission
 
+```js
+hasPermission(permissions, options)
+```
+
+`hasPermission: (permissions: { [permission: string]: boolean }, options: { [resource: string ]: string|integer })`
+
+Fist argument accepts a string or array of permissions to check. When passing an array, the user must have access to all permissions for hasPermission to be true.
+
+Second argument is an object. Currently only supports `resource` which is a resource's ID.
+
+### withAuth
 Restrict access to routes with this HOC
+
+```js
+withAuth(MyRestrictedComponent, ["stores:read"])
+```
+
 
 // TODO
 
