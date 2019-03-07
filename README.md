@@ -122,12 +122,12 @@ Fist argument accepts a string or array of permissions to check. When passing an
 Second argument is an object. Currently only supports `resource` which is a resource's ID.
 
 ### withAuth
+
 Restrict access to routes with this HOC
 
 ```js
 withAuth(MyRestrictedComponent, ["stores:read"])
 ```
-
 
 // TODO
 
