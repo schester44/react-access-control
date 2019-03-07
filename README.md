@@ -75,7 +75,7 @@ Has 3 available props:
 -   fallback (optional) - ReactNode to render when the user doesn't have permission.
 
 ```js
-<Show when="stores:read" resource={1} fallback={<div>I render when the user doesn't have access</div>}>
+<Show when="stores:read" resource={1} fallback={<div>I render when the user doesn\'t have access</div>}>
 	<MyComponent />
 </Show>
 ```
