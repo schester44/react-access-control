@@ -13,7 +13,6 @@ const checkPermission = (permissions, role) => {
 
 const hasPermission = (permissions = {}, resources, roles = [], additional) => {
 	const isArrayOfRoles = Array.isArray(roles)
-	console.log(permissions, resources, roles)
 
 	if (!!additional.resource) {
 		const hasResourceAccess = !isArrayOfRoles
