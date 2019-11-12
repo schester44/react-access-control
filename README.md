@@ -14,7 +14,7 @@ npm install --save react-access-control
 
 ```jsx
 import React from "react"
-import { AuthProvider, useAccess, Show } from "react-access-control"
+import { AccessProvider, useAccess, Show } from "react-access-control"
 import LoadingIndicator from "../LoadingIndicator"
 
 const Example = () => {
@@ -45,9 +45,9 @@ const Example = () => {
 }
 
 render(
-	<AuthProvider>
+	<AccessProvider>
 		<Example />
-	</AuthProvider>,
+	</AccessProvider>,
 	document.getElementById("root")
 )
 ```
